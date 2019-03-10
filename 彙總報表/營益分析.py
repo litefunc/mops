@@ -35,7 +35,7 @@ soup = BeautifulSoup(plain_text, 'lxml')
 print(soup.prettify())
 
 # ---- update data ----
-for YEAR in range(102, 107):
+for YEAR in range(105, 108):
     for SEASON in ['01', '02', '03', '04']:
         try:
             url = 'http://mops.twse.com.tw/mops/web/ajax_t163sb06'
@@ -68,7 +68,7 @@ for YEAR in range(102, 107):
 
 # ---- create table ----
 dfs = []
-for YEAR in range(102, 107):
+for YEAR in range(102, 108):
     for SEASON in ['01', '02', '03', '04']:
         try:
             url = 'http://mops.twse.com.tw/mops/web/ajax_t163sb06'

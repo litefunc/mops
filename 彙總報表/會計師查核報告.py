@@ -27,7 +27,7 @@ def yearfmt(x):
         return x
 
 import os
-path='C:/Users/user/Dropbox/program/crawler/finance/公開資訊觀測站/彙總報表/csvfiles/會計師查核報告/'
+path='/home/david/program/python/project/crawler/finance/mops/彙總報表/csvfiles/會計師查核報告/'
 os.chdir(path)
 
 #---- before ifrs 2003-2007 ----
@@ -192,8 +192,8 @@ for y in year:
 
 #----update----
 ys_e = []
-year = ['106']
-season = ['01']
+year = ['106', '107']
+season = ['01', '02', '03', '04']
 for y in year:
     for s in season:
         try:

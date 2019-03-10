@@ -86,7 +86,7 @@ soup = BeautifulSoup(plain_text, 'lxml')
 print(soup.prettify())
 
 # ---- update data ----
-for YEAR in range(106, 107):
+for YEAR in range(106, 108):
     try:
         url = 'http://mops.twse.com.tw/mops/web/ajax_t51sb02'
         payload = {'encodeURIComponent': '1', 'step': '1', 'firstin': '1', 'off': '1', 'year': YEAR, 'run': 'Y',
