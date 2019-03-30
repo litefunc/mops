@@ -1,3 +1,6 @@
+from common.connection import conn_local_lite
+import sqlCommand as sqlc
+import syspath
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -9,16 +12,15 @@ import sys
 if os.getenv('MY_PYTHON_PKG') not in sys.path:
     sys.path.append(os.getenv('MY_PYTHON_PKG'))
 
-import syspath
-import sqlCommand as sqlc
-from common.connection import conn_local_lite
 
 conn_lite = conn_local_lite('summary.sqlite3')
 cur_lite = conn_lite.cursor()
 
+
 def mymerge(x, y):
     m = pd.merge(x, y, how='outer')
     return m
+
 
 def yearfmt(x):
     if not pd.isnull(x) and len(x) == 3:
@@ -26,47 +28,53 @@ def yearfmt(x):
     else:
         return x
 
-import os
-path='/home/david/program/python/project/crawler/finance/mops/彙總報表/csvfiles/會計師查核報告/'
+
+path = os.getenv('MY_PYTHON_PROJECT') + \
+    '/crawler/finance/mops/彙總報表/csvfiles/會計師查核報告/'
+
 os.chdir(path)
 
-#---- before ifrs 2003-2007 ----
+# ---- before ifrs 2003-2007 ----
 ys_e = []
 year = ['92', '93', '94', '95', '96']
-season = ['01','02','03','04']
+season = ['01', '02', '03', '04']
 for y in year:
     for s in season:
         try:
             url = 'http://mops.twse.com.tw/mops/web/ajax_t06se09_1'
             headers = {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36'}
-            payload = {'step': '1', 'encodeURIComponent': '1', 'firstin': '1', 'off': '1', 'TYPEK': 'sii', 'year': y, 'season': s}
-            source_code = requests.post(url, headers=headers, data=payload)  # should use data instead of params
+            payload = {'step': '1', 'encodeURIComponent': '1', 'firstin': '1',
+                       'off': '1', 'TYPEK': 'sii', 'year': y, 'season': s}
+            # should use data instead of params
+            source_code = requests.post(url, headers=headers, data=payload)
             source_code.encoding = 'utf8'
             plain_text = source_code.text
             soup = BeautifulSoup(plain_text, 'html.parser')
-            h=[]
+            h = []
             for th in soup.find_all('table')[0].find_all('tr')[0].find_all('th'):
                 h.append(th.text)
-            tb=[h]
+            tb = [h]
             for tr in soup.find_all('table')[0].find_all('tr')[1:]:
-                r=[]
+                r = []
                 for td in tr.find_all('td'):
                     r.append(td.text.strip())
                 tb.append(r)
 
-            df=pd.DataFrame(tb)
+            df = pd.DataFrame(tb)
             df.columns = df.ix[0, :]
-            df=df.ix[1:len(df), :]
+            df = df.ix[1:len(df), :]
             df.insert(0, '年', int(y)+1911)
             df.insert(1, '季', s[1])
             date = soup.find_all('center')[0].text
             print(y, s, date)
-            df.核閱或查核日期 = df.核閱或查核日期.str.split('/').str[0].apply(yearfmt) + '-' + df.核閱或查核日期.str.split('/').str[1] + '-' + df.核閱或查核日期.str.split('/').str[2]
-            df.to_csv('{}{}{}.csv'.format(path, str(int(y)+1911), str(s)), index=False, encoding='utf8')
+            df.核閱或查核日期 = df.核閱或查核日期.str.split('/').str[0].apply(yearfmt) + '-' + df.核閱或查核日期.str.split(
+                '/').str[1] + '-' + df.核閱或查核日期.str.split('/').str[2]
+            df.to_csv('{}{}{}.csv'.format(path, str(int(y)+1911),
+                                          str(s)), index=False, encoding='utf8')
         except Exception as e:
             print(e)
-            ys_e.append([y,s])
+            ys_e.append([y, s])
             pass
 
 # --- before ifrs 2008-2011 ----
@@ -81,7 +89,8 @@ for y in year:
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36'}
             payload = {'step': '1', 'encodeURIComponent': '1', 'firstin': '1', 'off': '1', 'TYPEK': 'sii',
                        'year': y, 'season': s}
-            source_code = requests.post(url, headers=headers, data=payload)  # should use data instead of params
+            # should use data instead of params
+            source_code = requests.post(url, headers=headers, data=payload)
             source_code.encoding = 'utf8'
             plain_text = source_code.text
             soup = BeautifulSoup(plain_text, 'html.parser')
@@ -102,95 +111,105 @@ for y in year:
             df.insert(1, '季', s[1])
             date = soup.find_all('center')[0].text
             print(y, s, date)
-            df.核閱或查核日期 = df.核閱或查核日期.str.split('/').str[0].apply(yearfmt) + '-' + df.核閱或查核日期.str.split('/').str[1] + '-' + df.核閱或查核日期.str.split('/').str[2]
-            df.to_csv('{}{}{}.csv'.format(path, str(int(y)+1911), str(s)), index=False, encoding='utf8')
+            df.核閱或查核日期 = df.核閱或查核日期.str.split('/').str[0].apply(yearfmt) + '-' + df.核閱或查核日期.str.split(
+                '/').str[1] + '-' + df.核閱或查核日期.str.split('/').str[2]
+            df.to_csv('{}{}{}.csv'.format(path, str(int(y)+1911),
+                                          str(s)), index=False, encoding='utf8')
         except Exception as e:
             print(e)
             ys_e.append([y, s])
             pass
 
-#---- before ifrs 2012 ----
-path='C:\\Users\\ak66h_000\\OneDrive\\webscrap\\公開資訊觀測站\\彙總報表\\會計師查核報告\\'
+# ---- before ifrs 2012 ----
+path = 'C:\\Users\\ak66h_000\\OneDrive\\webscrap\\公開資訊觀測站\\彙總報表\\會計師查核報告\\'
 os.chdir(path)
 ys_e = []
 year = ['101']
-season = ['01','02','03','04']
+season = ['01', '02', '03', '04']
 for y in year:
     for s in season:
         try:
             url = 'http://mops.twse.com.tw/mops/web/ajax_t06se09_1'
             headers = {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36'}
-            payload = {'step': '1', 'encodeURIComponent': '1', 'firstin': '1', 'off': '1', 'TYPEK': 'sii', 'year': y, 'season': s}
-            source_code = requests.post(url, headers=headers, data=payload)  # should use data instead of params
+            payload = {'step': '1', 'encodeURIComponent': '1', 'firstin': '1',
+                       'off': '1', 'TYPEK': 'sii', 'year': y, 'season': s}
+            # should use data instead of params
+            source_code = requests.post(url, headers=headers, data=payload)
             source_code.encoding = 'utf8'
             plain_text = source_code.text
             soup = BeautifulSoup(plain_text, 'html.parser')
-            h=[]
+            h = []
             for th in soup.find_all('table')[0].find_all('tr')[0].find_all('th'):
                 h.append(th.text)
-            tb=[h]
+            tb = [h]
             for tr in soup.find_all('table')[0].find_all('tr')[1:]:
-                r=[]
+                r = []
                 for td in tr.find_all('td'):
                     r.append(td.text.strip())
                 tb.append(r)
 
-            df=pd.DataFrame(tb)
+            df = pd.DataFrame(tb)
             df.columns = df.ix[0, :]
-            df=df.ix[1:len(df), :]
+            df = df.ix[1:len(df), :]
             df.insert(0, '年', int(y)+1911)
             df.insert(1, '季', s[1])
             date = soup.find_all('center')[0].text
             print(y, s, date)
-            df.核閱或查核日期 = df.核閱或查核日期.str.split('/').str[0].apply(yearfmt) + '-' + df.核閱或查核日期.str.split('/').str[1] + '-' + df.核閱或查核日期.str.split('/').str[2]
-            df.to_csv('{}{}{}.csv'.format(path, str(int(y)+1911), str(s)), index=False, encoding='utf8')
+            df.核閱或查核日期 = df.核閱或查核日期.str.split('/').str[0].apply(yearfmt) + '-' + df.核閱或查核日期.str.split(
+                '/').str[1] + '-' + df.核閱或查核日期.str.split('/').str[2]
+            df.to_csv('{}{}{}.csv'.format(path, str(int(y)+1911),
+                                          str(s)), index=False, encoding='utf8')
         except Exception as e:
             print(e)
-            ys_e.append([y,s])
+            ys_e.append([y, s])
             pass
 
-#----after ifrs----
+# ----after ifrs----
 ys_e = []
-season = ['01','02','03','04']
-year = ['102','103', '104']
-season = ['01','02','03','04']
+season = ['01', '02', '03', '04']
+year = ['102', '103', '104']
+season = ['01', '02', '03', '04']
 for y in year:
     for s in season:
         try:
             url = 'http://mops.twse.com.tw/mops/web/ajax_t163sb14'
             headers = {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36'}
-            payload = {'step': '1', 'encodeURIComponent': '1', 'firstin': '1', 'off': '1', 'TYPEK': 'sii', 'year': y, 'season': s}
-            source_code = requests.post(url, headers=headers, data=payload)  # should use data instead of params
+            payload = {'step': '1', 'encodeURIComponent': '1', 'firstin': '1',
+                       'off': '1', 'TYPEK': 'sii', 'year': y, 'season': s}
+            # should use data instead of params
+            source_code = requests.post(url, headers=headers, data=payload)
             source_code.encoding = 'utf8'
             plain_text = source_code.text
             soup = BeautifulSoup(plain_text, 'html.parser')
-            h=[]
+            h = []
             for th in soup.find_all('table')[0].find_all('tr')[0].find_all('th'):
                 h.append(th.text)
-            tb=[h]
+            tb = [h]
             for tr in soup.find_all('table')[0].find_all('tr')[1:]:
-                r=[]
+                r = []
                 for td in tr.find_all('td'):
                     r.append(td.text)
                 tb.append(r)
 
-            df=pd.DataFrame(tb)
+            df = pd.DataFrame(tb)
             df.columns = df.ix[0, :]
-            df=df.ix[1:len(df), :]
+            df = df.ix[1:len(df), :]
             df.insert(0, '年', int(y)+1911)
             df.insert(1, '季', s[1])
             date = soup.find_all('center')[0].text
             print(y, s, date)
-            df.核閱或查核日期 = df.核閱或查核日期.str.split('/').str[0].apply(yearfmt) + '-' + df.核閱或查核日期.str.split('/').str[1] + '-' + df.核閱或查核日期.str.split('/').str[2]
-            df.to_csv('{}{}{}.csv'.format(path, str(int(y)+1911), str(s)), index=False, encoding='utf8')
+            df.核閱或查核日期 = df.核閱或查核日期.str.split('/').str[0].apply(yearfmt) + '-' + df.核閱或查核日期.str.split(
+                '/').str[1] + '-' + df.核閱或查核日期.str.split('/').str[2]
+            df.to_csv('{}{}{}.csv'.format(path, str(int(y)+1911),
+                                          str(s)), index=False, encoding='utf8')
         except Exception as e:
             print(e)
-            ys_e.append([y,s])
+            ys_e.append([y, s])
             pass
 
-#----update----
+# ----update----
 ys_e = []
 year = ['106', '107']
 season = ['01', '02', '03', '04']
@@ -200,37 +219,41 @@ for y in year:
             url = 'http://mops.twse.com.tw/mops/web/ajax_t163sb14'
             headers = {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36'}
-            payload = {'step': '1', 'encodeURIComponent': '1', 'firstin': '1', 'off': '1', 'TYPEK': 'sii', 'year': y, 'season': s}
-            source_code = requests.post(url, headers=headers, data=payload)  # should use data instead of params
+            payload = {'step': '1', 'encodeURIComponent': '1', 'firstin': '1',
+                       'off': '1', 'TYPEK': 'sii', 'year': y, 'season': s}
+            # should use data instead of params
+            source_code = requests.post(url, headers=headers, data=payload)
             source_code.encoding = 'utf8'
             plain_text = source_code.text
             soup = BeautifulSoup(plain_text, 'html.parser')
-            h=[]
+            h = []
             for th in soup.find_all('table')[0].find_all('tr')[0].find_all('th'):
                 h.append(th.text)
-            tb=[h]
+            tb = [h]
             for tr in soup.find_all('table')[0].find_all('tr')[1:]:
-                r=[]
+                r = []
                 for td in tr.find_all('td'):
                     r.append(td.text)
                 tb.append(r)
 
-            df=pd.DataFrame(tb)
+            df = pd.DataFrame(tb)
             df.columns = df.ix[0, :]
-            df=df.ix[1:len(df), :]
+            df = df.ix[1:len(df), :]
             df.insert(0, '年', int(y)+1911)
             df.insert(1, '季', int(s[1]))
             date = soup.find_all('center')[0].text
             print(y, s, date)
-            df.核閱或查核日期 = df.核閱或查核日期.str.split('/').str[0].apply(yearfmt) + '-' + df.核閱或查核日期.str.split('/').str[1] + '-' + df.核閱或查核日期.str.split('/').str[2]
-            df.to_csv('{}{}{}.csv'.format(path, str(int(y)+1911), str(s)), index=False, encoding='utf8')
+            df.核閱或查核日期 = df.核閱或查核日期.str.split('/').str[0].apply(yearfmt) + '-' + df.核閱或查核日期.str.split(
+                '/').str[1] + '-' + df.核閱或查核日期.str.split('/').str[2]
+            df.to_csv('{}{}{}.csv'.format(path, str(int(y)+1911),
+                                          str(s)), index=False, encoding='utf8')
             sqlc.insertData('會計師查核報告', df, conn_lite)
         except Exception as e:
             print(e)
-            ys_e.append([y,s])
+            ys_e.append([y, s])
             pass
 
-#---- create table ----
+# ---- create table ----
 # l = os.listdir()
 # L=[]
 # for i in l:
