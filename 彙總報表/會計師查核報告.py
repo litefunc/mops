@@ -41,7 +41,7 @@ season = ['01', '02', '03', '04']
 for y in year:
     for s in season:
         try:
-            url = 'http://mops.twse.com.tw/mops/web/ajax_t06se09_1'
+            url = 'https://mops.twse.com.tw/mops/web/ajax_t06se09_1'
             headers = {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36'}
             payload = {'step': '1', 'encodeURIComponent': '1', 'firstin': '1',
@@ -84,7 +84,7 @@ season = ['01', '02', '03', '04']
 for y in year:
     for s in season:
         try:
-            url = 'http://mops.twse.com.tw/mops/web/ajax_t06se09_1'
+            url = 'https://mops.twse.com.tw/mops/web/ajax_t06se09_1'
             headers = {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36'}
             payload = {'step': '1', 'encodeURIComponent': '1', 'firstin': '1', 'off': '1', 'TYPEK': 'sii',
@@ -129,7 +129,7 @@ season = ['01', '02', '03', '04']
 for y in year:
     for s in season:
         try:
-            url = 'http://mops.twse.com.tw/mops/web/ajax_t06se09_1'
+            url = 'https://mops.twse.com.tw/mops/web/ajax_t06se09_1'
             headers = {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36'}
             payload = {'step': '1', 'encodeURIComponent': '1', 'firstin': '1',
@@ -173,7 +173,7 @@ season = ['01', '02', '03', '04']
 for y in year:
     for s in season:
         try:
-            url = 'http://mops.twse.com.tw/mops/web/ajax_t163sb14'
+            url = 'https://mops.twse.com.tw/mops/web/ajax_t163sb14'
             headers = {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36'}
             payload = {'step': '1', 'encodeURIComponent': '1', 'firstin': '1',
@@ -216,7 +216,7 @@ season = ['01', '02', '03', '04']
 for y in year:
     for s in season:
         try:
-            url = 'http://mops.twse.com.tw/mops/web/ajax_t163sb14'
+            url = 'https://mops.twse.com.tw/mops/web/ajax_t163sb14'
             headers = {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36'}
             payload = {'step': '1', 'encodeURIComponent': '1', 'firstin': '1',

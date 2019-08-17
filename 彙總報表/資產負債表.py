@@ -1,3 +1,6 @@
+from common.connection import conn_local_lite
+import sqlCommand as sqlc
+import syspath
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -9,17 +12,16 @@ import sys
 if os.getenv('MY_PYTHON_PKG') not in sys.path:
     sys.path.append(os.getenv('MY_PYTHON_PKG'))
 
-import syspath
-import sqlCommand as sqlc
-from common.connection import conn_local_lite
 
 conn_lite = conn_local_lite('summary.sqlite3')
 cur_lite = conn_lite.cursor()
 
 
 def mymerge(x, y):
-    m = pd.merge(x, y, on = [col for col in list(x) if col in list(y)], how = 'outer')
+    m = pd.merge(x, y, on=[col for col in list(x)
+                           if col in list(y)], how='outer')
     return m
+
 
 def industry(ids):
     if '2801' in ids or '2834' in ids:
@@ -38,24 +40,29 @@ def industry(ids):
 
 # #----test connection----
 
+
 YEAR = '106'
 SEASON = '03'
-url = 'http://mops.twse.com.tw/mops/web/ajax_t163sb05'
-payload = {'encodeURIComponent':'1','step':'1', 'firstin':'1', 'off':'1','year':YEAR, 'season':SEASON, 'TYPEK':'sii'}
-source_code = requests.post(url, data=payload) #should use data instead of params
+url = 'https://mops.twse.com.tw/mops/web/ajax_t163sb05'
+payload = {'encodeURIComponent': '1', 'step': '1', 'firstin': '1',
+           'off': '1', 'year': YEAR, 'season': SEASON, 'TYPEK': 'sii'}
+# should use data instead of params
+source_code = requests.post(url, data=payload)
 source_code.encoding = 'utf8'
 source_code.headers
 plain_text = source_code.text
-soup = BeautifulSoup(plain_text, 'lxml') # don't use html.parser because it can't parse correctly
+# don't use html.parser because it can't parse correctly
+soup = BeautifulSoup(plain_text, 'lxml')
 print(soup.prettify())
 
 # ---- update data ----
 for YEAR in ['107']:
-    for SEASON in ['01']:
-        url = 'http://mops.twse.com.tw/mops/web/ajax_t163sb05'
+    for SEASON in ['02']:
+        url = 'https://mops.twse.com.tw/mops/web/ajax_t163sb05'
         payload = {'encodeURIComponent': '1', 'step': '1', 'firstin': '1', 'off': '1', 'year': YEAR, 'season': SEASON,
                    'TYPEK': 'sii'}
-        source_code = requests.post(url, data=payload)  # should use data instead of params
+        # should use data instead of params
+        source_code = requests.post(url, data=payload)
         source_code.encoding = 'utf8'
         source_code.headers
         plain_text = source_code.text
@@ -68,7 +75,8 @@ for YEAR in ['107']:
                 tb.append(ths)
                 for r in trs[1:]:
                     tb.append(list(map(lambda x: x.text, r.find_all('td'))))
-                df = pd.DataFrame(tb[1:], columns=tb[0]).replace(',', '', regex=True).replace('--', np.nan)
+                df = pd.DataFrame(tb[1:], columns=tb[0]).replace(
+                    ',', '', regex=True).replace('--', np.nan)
                 df.insert(0, '年', int(YEAR) + 1911)
                 df.insert(1, '季', SEASON.replace('0', ''))
                 ind = industry(list(df['公司代號']))

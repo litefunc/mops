@@ -1,5 +1,8 @@
 
-#---- use 除權息計算結果表 instead----
+# ---- use 除權息計算結果表 instead----
+from common.connection import conn_local_lite
+import sqlCommand as sqlc
+import syspath
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -11,28 +14,27 @@ import sys
 if os.getenv('MY_PYTHON_PKG') not in sys.path:
     sys.path.append(os.getenv('MY_PYTHON_PKG'))
 
-import syspath
-import sqlCommand as sqlc
-from common.connection import conn_local_lite
 
 conn_lite = conn_local_lite('summary.sqlite3')
 cur_lite = conn_lite.cursor()
+
 
 def mymerge(x, y):
     m = pd.merge(x, y, how='outer')
     return m
 
-path='C:/Users/user/Dropbox/program/crawler/finance/公開資訊觀測站/彙總報表/csvfiles/除權息公告/'
+
+path = 'C:/Users/user/Dropbox/program/crawler/finance/公開資訊觀測站/彙總報表/csvfiles/除權息公告/'
 os.chdir(path)
 
 
-#---- create table ----
+# ---- create table ----
 
 # ys_e = []
 # year = ['94','95','96','97', '98', '99','100','101','102','103','104']
 # for y in year:
 #     try:
-#         url = 'http://mops.twse.com.tw/mops/web/ajax_t108sb27'
+#         url = 'https://mops.twse.com.tw/mops/web/ajax_t108sb27'
 #         headers = {
 #             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36'}
 #         payload = {'step': '1', 'encodeURIComponent': '1', 'firstin': '1', 'off': '1', 'TYPEK': 'sii', 'year': y}
@@ -139,10 +141,9 @@ os.chdir(path)
 # soup.find_all('table')[1].find_all('tr').text()
 # soup.find_all('table')[1].find_all('tr')[0].find_all(rowspan="2")[0].get_text()
 
-#----update----
-import os
+# ----update----
 l = os.listdir()
-L=[]
+L = []
 for i in l:
     try:
         df = pd.read_csv(i, encoding='cp950', index_col=False).replace('?', '')
@@ -152,7 +153,7 @@ for i in l:
         print(i)
 df = cytoolz.reduce(mymerge, L)
 # df = df.dropna(axis=0, subset=['公司名稱']).replace('\xa0', NaN)
-df = df[df.權利分派基準日!='權利分派基準日'].reset_index(drop=True)
+df = df[df.權利分派基準日 != '權利分派基準日'].reset_index(drop=True)
 df.insert(0, '年', df['權利分派基準日'].str.split('/').str[0])
 df.年 = df.年.astype(int)
 
