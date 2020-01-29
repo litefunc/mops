@@ -57,6 +57,7 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 import numpy as np
+import datetime as dt
 import cytoolz.curried
 import os
 import sys
@@ -90,7 +91,7 @@ soup = BeautifulSoup(plain_text, 'lxml')
 print(soup.prettify())
 
 # ---- update data ----
-for YEAR in range(106, 109):
+for YEAR in range(108, 109):
     try:
         url = 'https://mops.twse.com.tw/mops/web/ajax_t51sb02'
         payload = {'encodeURIComponent': '1', 'step': '1', 'firstin': '1', 'off': '1', 'year': YEAR, 'run': 'Y',
