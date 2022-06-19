@@ -209,10 +209,45 @@ for y in year:
             ys_e.append([y, s])
             pass
 
+
+# test connection
+# y = '107'
+# s = '02'
+# url = 'https://mops.twse.com.tw/mops/web/ajax_t163sb14'
+# headers = {
+#     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36'}
+# payload = {'step': '1', 'encodeURIComponent': '1', 'firstin': '1',
+#            'off': '1', 'TYPEK': 'sii', 'year': y, 'season': s}
+# # should use data instead of params
+# source_code = requests.post(url, headers=headers, data=payload)
+# source_code.encoding = 'utf8'
+# plain_text = source_code.text
+# soup = BeautifulSoup(plain_text, 'html.parser')
+# h = []
+# for th in soup.find_all('table')[0].find_all('tr')[0].find_all('th'):
+#     h.append(th.text)
+# tb = [h]
+# for tr in soup.find_all('table')[0].find_all('tr')[1:]:
+#     r = []
+#     for td in tr.find_all('td'):
+#         r.append(td.text)
+#     tb.append(r)
+
+# df = pd.DataFrame(tb[1:len(tb)], columns=tb[0])
+# df.insert(0, '年', int(y)+1911)
+# df.insert(1, '季', int(s[1]))
+# date = soup.find_all('center')[0].text
+# print(y, s, date)
+# df.核閱或查核日期 = df.核閱或查核日期.str.split('/').str[0].apply(yearfmt) + '-' + df.核閱或查核日期.str.split(
+#     '/').str[1] + '-' + df.核閱或查核日期.str.split('/').str[2]
+
+# df
+
 # ----update----
 ys_e = []
-year = ['106', '107']
-season = ['01', '02', '03', '04']
+year = ['111']
+season = ['01']
+# season = ['02']
 for y in year:
     for s in season:
         try:
@@ -236,9 +271,10 @@ for y in year:
                     r.append(td.text)
                 tb.append(r)
 
-            df = pd.DataFrame(tb)
-            df.columns = df.ix[0, :]
-            df = df.ix[1:len(df), :]
+            df = pd.DataFrame(tb[1:len(tb)], columns=tb[0])
+            # df = pd.DataFrame(tb)
+            # df.columns = df.ix[0, :]
+            # df = df.ix[1:len(df), :]
             df.insert(0, '年', int(y)+1911)
             df.insert(1, '季', int(s[1]))
             date = soup.find_all('center')[0].text

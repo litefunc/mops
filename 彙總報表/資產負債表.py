@@ -130,6 +130,8 @@ for ys in yss:
             df.insert(1, '季', SEASON.replace('0', ''))
             ind = industry(list(df['公司代號']))
             print(ind)
+            df.rename(
+                columns={'權益─具證券性質之虛擬通貨': '權益－具證券性質之虛擬通貨'},  inplace=True)
             sqlc.insertData('資產負債表-{}'.format(ind), df, conn_lite)
         except Exception as e:
             print(YEAR, SEASON, ind, e)
@@ -183,15 +185,14 @@ for ys in yss:
 # ALTER TABLE "資產負債表-一般業" ADD COLUMN "權益總計"
 # ALTER TABLE "資產負債表-其他業" ADD COLUMN "透過其他綜合損益按公允價值衡量之金融資產"
 
-cur_lite.execute("""
-ALTER TABLE "資產負債表-一般業" ADD COLUMN "權益總計"
-""")
-cur_lite.execute("""
-ALTER TABLE "資產負債表-其他業" ADD COLUMN "透過其他綜合損益按公允價值衡量之金融資產"
-""")
-cur_lite.execute("""
-ALTER TABLE "資產負債表-保險業" ADD COLUMN "本期所得稅資產"
-""")
+# cur_lite.execute("""
+# ALTER TABLE "資產負債表-一般業" ADD COLUMN "權益總計"
+# """)
+# cur_lite.execute("""
+# ALTER TABLE "資產負債表-其他業" ADD COLUMN "透過其他綜合損益按公允價值衡量之金融資產"
+# """)
+# cur_lite.execute("""
+# ALTER TABLE "資產負債表-保險業" ADD COLUMN "本期所得稅資產"
+# """)
 
-
-conn_lite.commit()
+# conn_lite.commit()
