@@ -97,8 +97,8 @@ soup = BeautifulSoup(plain_text, 'lxml')
 print(soup.prettify())
 
 # ---- update data ----
-for YEAR in ['108']:
-    for SEASON in ['03']:
+for YEAR in ['111', '112', '113']:
+    for SEASON in ['01', '02', '03', '04']:
         url = 'https://mops.twse.com.tw/mops/web/ajax_t163sb04'
         payload = {'encodeURIComponent': '1', 'step': '1', 'firstin': '1', 'off': '1', 'year': YEAR, 'season': SEASON,
                    'TYPEK': 'sii'}

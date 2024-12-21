@@ -246,7 +246,7 @@ for y in year:
 # ----update----
 ys_e = []
 year = ['111']
-season = ['01']
+season = ['01', '02', '03', '04']
 # season = ['02']
 for y in year:
     for s in season:
